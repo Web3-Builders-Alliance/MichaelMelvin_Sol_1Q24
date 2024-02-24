@@ -1,0 +1,3 @@
+[submodule "capstone/valhalla"]
+	path = capstone/valhalla
+	url = git@github.com:mmelvin0x/valhalla.git
