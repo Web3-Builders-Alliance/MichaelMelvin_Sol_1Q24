@@ -1,5 +1,4 @@
 import {
-  createGenericFile,
   createSignerFromKeypair,
   signerIdentity,
 } from "@metaplex-foundation/umi";
