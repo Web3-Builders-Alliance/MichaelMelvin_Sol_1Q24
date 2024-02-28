@@ -1,18 +1,19 @@
 import {
-  Connection,
-  Keypair,
-  SystemProgram,
-  PublicKey,
-  Commitment,
-} from "@solana/web3.js";
-import {
+  Address,
+  AnchorProvider,
+  BN,
   Program,
   Wallet,
-  AnchorProvider,
-  Address,
-  BN,
 } from "@coral-xyz/anchor";
-import { WbaVault, IDL } from "./programs/wba_vault";
+import {
+  Commitment,
+  Connection,
+  Keypair,
+  PublicKey,
+  SystemProgram,
+} from "@solana/web3.js";
+import { IDL, WbaVault } from "./programs/wba_vault";
+
 import wallet from "./wallet/wba-wallet.json";
 
 // Import our keypair from the wallet file
@@ -34,15 +35,17 @@ const program = new Program<WbaVault>(IDL, "<address>" as Address, provider);
 
 // Create a random keypair
 const vaultState = new PublicKey("<address>");
-// Create the PDA for our enrollment account
-// Seeds are "auth", vaultState
-// const vaultAuth = ???
 
-// Create the vault key
-// Seeds are "vault", vaultAuth
-// const vault = ???
+const vaultAuth = PublicKey.findProgramAddressSync(
+  [Buffer.from("auth"), vaultState.toBuffer()],
+  program.programId
+)[0];
 
-// Execute our enrollment transaction
+const vault = PublicKey.findProgramAddressSync(
+  [Buffer.from("vault"), vaultAuth.toBuffer()],
+  program.programId
+)[0];
+
 (async () => {
   try {
     // const signature = await program.methods

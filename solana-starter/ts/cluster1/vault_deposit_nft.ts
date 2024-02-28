@@ -1,24 +1,25 @@
 import {
-  Connection,
-  Keypair,
-  SystemProgram,
-  PublicKey,
-  Commitment,
-} from "@solana/web3.js";
-import {
-  Program,
-  Wallet,
-  AnchorProvider,
-  Address,
-  BN,
-} from "@coral-xyz/anchor";
-import { WbaVault, IDL } from "./programs/wba_vault";
-import wallet from "./wallet/wba-wallet.json";
-import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
   getOrCreateAssociatedTokenAccount,
 } from "@solana/spl-token";
+import {
+  Address,
+  AnchorProvider,
+  BN,
+  Program,
+  Wallet,
+} from "@coral-xyz/anchor";
+import {
+  Commitment,
+  Connection,
+  Keypair,
+  PublicKey,
+  SystemProgram,
+} from "@solana/web3.js";
+import { IDL, WbaVault } from "./programs/wba_vault";
+
+import wallet from "./wallet/wba-wallet.json";
 
 // Import our keypair from the wallet file
 const keypair = Keypair.fromSecretKey(new Uint8Array(wallet));
@@ -40,11 +41,15 @@ const program = new Program<WbaVault>(IDL, "<address>" as Address, provider);
 // Create a random keypair
 const vaultState = new PublicKey("<address>");
 
-// Create the PDA for our enrollment account
-// const vaultAuth = ???
+const vaultAuth = PublicKey.findProgramAddressSync(
+  [Buffer.from("auth"), vaultState.toBuffer()],
+  program.programId
+)[0];
 
-// Create the vault key
-// const vault = ???
+const vault = PublicKey.findProgramAddressSync(
+  [Buffer.from("vault"), vaultAuth.toBuffer()],
+  program.programId
+)[0];
 
 // Mint address
 const mint = new PublicKey("<address>");
@@ -53,11 +58,11 @@ const mint = new PublicKey("<address>");
 (async () => {
   try {
     const metadataProgram = new PublicKey(
-      "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s",
+      "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
     );
     const metadataAccount = PublicKey.findProgramAddressSync(
       [Buffer.from("metadata"), metadataProgram.toBuffer(), mint.toBuffer()],
-      metadataProgram,
+      metadataProgram
     )[0];
     const masterEdition = PublicKey.findProgramAddressSync(
       [
@@ -66,7 +71,7 @@ const mint = new PublicKey("<address>");
         mint.toBuffer(),
         Buffer.from("edition"),
       ],
-      metadataProgram,
+      metadataProgram
     )[0];
 
     // b"metadata", MetadataProgramID.key.as_ref(), mint.key.as_ref() "master"
