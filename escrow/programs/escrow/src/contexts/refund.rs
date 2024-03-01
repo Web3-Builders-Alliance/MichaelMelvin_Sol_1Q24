@@ -58,13 +58,23 @@ impl<'info> Refund<'info> {
         let cpi_program = self.token_program.to_account_info();
 
         let cpi_accounts = TransferChecked {
-            from: self.escrow.to_account_info(),
+            from: self.escrow_ata_x.to_account_info(),
             to: self.maker_ata_x.to_account_info(),
             authority: self.escrow.to_account_info(),
             mint: self.mint_x.to_account_info(),
         };
 
-        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
+        let maker_key = self.maker.to_account_info().key();
+        let seed_bytes = self.escrow.seed.to_le_bytes();
+
+        let signer_seeds: &[&[&[u8]]] = &[&[
+            b"escrow",
+            maker_key.as_ref(),
+            seed_bytes.as_ref(),
+            &[self.escrow.bump],
+        ]];
+
+        let cpi_ctx = CpiContext::new_with_signer(cpi_program, cpi_accounts, signer_seeds);
 
         transfer_checked(cpi_ctx, self.escrow_ata_x.amount, self.mint_x.decimals)
     }

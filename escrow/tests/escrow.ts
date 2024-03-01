@@ -210,7 +210,7 @@ describe("escrow", () => {
     escrowAtaX = getAssociatedTokenAddressSync(mintX.publicKey, escrow, true);
 
     await program.methods
-      .make(amountX, amountX, seed)
+      .make(seed, amountX, amountY)
       .accounts({
         maker: maker.publicKey,
         escrow,
