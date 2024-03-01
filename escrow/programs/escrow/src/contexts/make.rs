@@ -56,20 +56,20 @@ pub struct Make<'info> {
 impl<'info> Make<'info> {
     pub fn make(
         &mut self,
+        seed: u64,
         amount_x: u64,
         amount_y: u64,
-        seed: u64,
         bumps: &MakeBumps,
     ) -> Result<()> {
-        self.create_escrow(amount_x, amount_y, seed, bumps)?;
+        self.create_escrow(seed, amount_x, amount_y, bumps)?;
         self.transfer_to_escrow(amount_x)
     }
 
     fn create_escrow(
         &mut self,
+        seed: u64,
         amount_x: u64,
         amount_y: u64,
-        seed: u64,
         bumps: &MakeBumps,
     ) -> Result<()> {
         self.escrow.set_inner(Escrow {
