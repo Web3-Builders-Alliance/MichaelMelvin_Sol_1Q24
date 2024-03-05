@@ -1,28 +1,31 @@
 use anchor_lang::prelude::*;
 
-declare_id!("5jd71oZ4bDw53bsVDCfPieohbHutweorNXMADt7CLNKZ");
+mod instructions;
+mod state;
 
-pub mod contexts;
-pub mod state;
+use instructions::*;
 
-pub use contexts::*;
+declare_id!("EQVoqyop6hithNnEi56ozEaibrWTWK7oFozxNH4XhCeQ");
 
 #[program]
 pub mod escrow {
     use super::*;
 
-    pub fn make(ctx: Context<Make>, seed: u64, amount_x: u64, amount_y: u64) -> Result<()> {
-        ctx.accounts.make(seed, amount_x, amount_y, &ctx.bumps)
-    }
-
-    pub fn refund(ctx: Context<Refund>) -> Result<()> {
-        ctx.accounts.refund()
+    pub fn make(
+        ctx: Context<Make>,
+        seed: u64,
+        x_amount_deposited: u64,
+        y_amount_expected: u64,
+    ) -> Result<()> {
+        ctx.accounts
+            .make(seed, x_amount_deposited, y_amount_expected)
     }
 
     pub fn take(ctx: Context<Take>) -> Result<()> {
         ctx.accounts.take()
     }
-}
 
-#[derive(Accounts)]
-pub struct Initialize {}
+    pub fn cancel(ctx: Context<Cancel>) -> Result<()> {
+        ctx.accounts.cancel()
+    }
+}
